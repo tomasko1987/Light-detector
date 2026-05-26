@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFRobot Light Sensor — Dokumentácia (SK)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --code-bg: #1e293b;
+      --code-text: #e2e8f0;
+      --accent: #0ea5e9;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    header h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    header p  { font-size: 1.1rem; opacity: 0.85; }
+
+    .lang-switch {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.5rem;
+    }
+    .lang-switch a {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      text-decoration: none;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: background 0.2s;
+    }
+    .lang-switch a:hover { background: rgba(255,255,255,0.35); }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--primary); }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--text);
+      margin: 1.4rem 0 0.7rem;
+      font-weight: 600;
+    }
+
+    p { margin-bottom: 0.9rem; }
+
+    ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+    li { margin-bottom: 0.3rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th {
+      background: #f1f5f9;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+    td {
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+
+    code {
+      background: #f1f5f9;
+      color: #dc2626;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.3rem 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+    pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .img-grid figure { margin: 0; }
+    .img-grid img { margin: 0 0 0.4rem; width: 100%; }
+    .img-grid figcaption { font-size: 0.82rem; color: var(--text-muted); text-align: center; }
+
+    .img-full figure { margin: 0; }
+    .img-full figcaption { font-size: 0.82rem; color: var(--text-muted); text-align: center; margin-top: 0.3rem; }
+
+    .note {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 0.8rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+
+    .warning {
+      background: #fffbeb;
+      border-left: 4px solid var(--warning);
+      padding: 0.8rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+
+    .flow-box {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.3rem 1.5rem;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 1rem 0;
+      white-space: pre;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.6rem; }
+      section { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header style="position:relative;">
+  <div class="lang-switch"><a href="documentation_EN.html">🇬🇧 English</a></div>
+  <h1>🌤️ DFRobot Light Sensor</h1>
+  <p>IoT Merač Intenzity Svetla — Dokumentácia projektu</p>
+</header>
+
+<nav>
+  <a href="#concept">1. Koncept</a>
+  <a href="#hardware">2. Hardware</a>
+  <a href="#architecture">3. Architektúra</a>
+  <a href="#code">4. Kód</a>
+  <a href="#aws">5. AWS TimeStream</a>
+  <a href="#grafana">6. Grafana</a>
+  <a href="#config">7. Konfigurácia</a>
+  <a href="#libraries">8. Knižnice</a>
+  <a href="#devices">9. Zariadenia</a>
+</nav>
+
+<main>
+
+  <!-- 1. KONCEPT -->
+  <section id="concept">
+    <h2>1. Koncept projektu</h2>
+    <p>
+      Projekt slúži na <strong>meranie intenzity denného svetla</strong> (v luxoch) na streche budovy.
+      Dve samostatné meracie jednotky zbierajú dáta a odosielajú ich súčasne do dvoch destinácií —
+      lokálneho <strong>Home Assistant</strong> servera aj do cloudu (<strong>AWS IoT</strong>).
+    </p>
+    <div class="img-full">
+      <figure>
+        <img src="../images/Concept.png" alt="Systémový koncept">
+        <figcaption>Obr. 1 — Celkový systémový diagram projektu</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2. HARDWARE -->
+  <section id="hardware">
+    <h2>2. Hardware</h2>
+
+    <h3>Komponenty</h3>
+    <table>
+      <thead><tr><th>Komponent</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MCU</strong></td><td>ESP32 WROOM</td></tr>
+        <tr><td><strong>Senzor</strong></td><td>DFRobot B_LUX_V30B (SEN0390) — merač intenzity svetla</td></tr>
+        <tr><td><strong>Komunikácia senzora</strong></td><td>I2C cez flat ribbon kábel, pin 13 (chip select)</td></tr>
+        <tr><td><strong>Napájanie</strong></td><td>5V cez USB / priemyselný konektor</td></tr>
+        <tr><td><strong>Krabička</strong></td><td>Plastová inštalačná krabička vystlaná hliníkovou fóliou (tienenie EMI)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Zostava jednotky</h3>
+    <p>
+      ESP32 je osadený na prototypovej PCB. Senzor B_LUX_V30B je vyvedený von z krabičky cez flat kábel
+      a zakrytý priehľadnou kupolou, ktorá ho chráni pred mechanickým poškodením, no prepúšťa svetlo.
+    </p>
+    <div class="img-full">
+      <figure>
+        <img src="../images/Light Detector Hardware 2.jpg" alt="Zostava jednotky">
+        <figcaption>Obr. 2 — ESP32 na PCB s pripojeným senzorom cez ribbon kábel</figcaption>
+      </figure>
+    </div>
+
+    <h3>Montáž do krabičky</h3>
+    <p>
+      Elektronika je uložená v krabičke vystlanej hliníkovou fóliou.
+      Napájací a komunikačný konektor je vyvedený zdola cez priemyselný skrutkový konektor.
+    </p>
+    <div class="img-full">
+      <figure>
+        <img src="../images/Light Detector Hardware 3.jpg" alt="Montáž do krabičky">
+        <figcaption>Obr. 3 — Elektronika uložená v tieniacej krabičke</figcaption>
+      </figure>
+    </div>
+
+    <h3>Finálna jednotka</h3>
+    <p>Zatvorená krabička — senzorová kupola na prednej strane, priemyselný konektor naspodu.</p>
+    <div class="img-full">
+      <figure>
+        <img src="../images/Light Detector Hardware 4.jpg" alt="Finálna jednotka">
+        <figcaption>Obr. 4 — Finálna zostava jednotky</figcaption>
+      </figure>
+    </div>
+
+    <h3>Inštalácia</h3>
+    <p>
+      Dve jednotky sú nainštalované pri strešnom okne, senzory smerujú nahor smerom k sklenenému panelu.
+      Červené LED na ESP32 indikujú, že zariadenia bežia.
+    </p>
+    <div class="img-grid">
+      <figure>
+        <img src="../images/Light Detector Hardware 5.jpg" alt="Inštalácia — zariadenia zapnuté">
+        <figcaption>Obr. 5 — Dve jednotky v prevádzke (LED svieti)</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/Light Detector Hardware 1.jpg" alt="Inštalácia pri okne">
+        <figcaption>Obr. 6 — Finálna inštalácia pri strešnom okne</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 3. ARCHITEKTÚRA -->
+  <section id="architecture">
+    <h2>3. Systémová architektúra</h2>
+    <p>Každá jednotka komunikuje bezdrôtovo cez WiFi s troma externými službami:</p>
+    <div class="flow-box">                  ┌─────────────────────────┐
+                  │      NTP Server         │
+                  │   pool.ntp.org (GMT+1)  │
+                  └────────────┬────────────┘
+                               │ čas
+              ┌────────────────▼─────────────────┐
+              │           ESP32 WROOM            │
+              │                                  │
+              │  DFRobot SEN0390  ←── I2C ──┐    │
+              │  (lux meranie)         ribbon│    │
+              │                         kábel│    │
+              └──────┬───────────────────────────┘
+                     │ WiFi
+          ┌──────────┴──────────┐
+          │                     │
+          ▼                     ▼
+  ┌───────────────┐    ┌────────────────────┐
+  │  Local PC     │    │       AWS          │
+  │               │    │                   │
+  │  Home Asst.   │    │  IoT Thing        │
+  │  MQTT Broker  │    │  (MQTT/TLS 8883)  │
+  │  port 1883    │    │                   │
+  │      │        │    │  TimeStream DB    │
+  │      ▼        │    └────────────────────┘
+  │   Grafana     │
+  └───────────────┘</div>
+  </section>
+
+  <!-- 4. KÓD -->
+  <section id="code">
+    <h2>4. Popis kódu — Funkčné bloky</h2>
+
+    <h3>4.1 Inicializácia — <code>setup()</code></h3>
+    <p>Po zapnutí ESP32 prebehne jednorazová inicializácia:</p>
+    <ul>
+      <li>Spustenie sériového portu (<code>115200 baud</code>)</li>
+      <li>Pripojenie na WiFi sieť — čaká v slučke až do úspešného spojenia</li>
+      <li>Inicializácia svetelného senzora <code>myLux.begin()</code></li>
+      <li>Načítanie AWS TLS certifikátov (CA, device cert, private key) uložených v <code>PROGMEM</code></li>
+      <li>Nastavenie MQTT serverov — AWS (<code>port 8883</code>) aj lokálny HA (<code>port 1883</code>)</li>
+      <li>Štart NTP klienta pre synchronizáciu času</li>
+    </ul>
+
+    <h3>4.2 Získanie dát — <code>sensorData()</code></h3>
+    <ul>
+      <li>Vyžiada aktuálny čas z NTP servera (<code>forceUpdate()</code>)</li>
+      <li>Prečíta intenzitu svetla zo senzora → hodnota v luxoch (<code>double</code> → prevedená na <code>int</code>)</li>
+      <li>Zostaví JSON správu a uloží do zdieľaného buffra <code>jsonBuffer[512]</code></li>
+    </ul>
+    <pre><code>{
+  "light": 8137,
+  "date": "2024-06-12 12:57:24",
+  "id": "roof1"
+}</code></pre>
+
+    <h3>4.3 Odosielanie na lokálny MQTT — <code>sendToLocalMQTT()</code></h3>
+    <ul>
+      <li>Overí, či je aktívne spojenie s lokálnym HA brokerom</li>
+      <li>Ak nie → pripojí sa pomocou <code>HA_MQTT_USER</code> / <code>HA_MQTT_PASSWORD</code></li>
+      <li>Publikuje JSON na tému <code>home/roof/roofLight_1</code></li>
+    </ul>
+    <p>Takto vyzerá prijatá správa v Home Assistant MQTT brokerovi:</p>
+    <div class="img-grid">
+      <figure>
+        <img src="../images/Home Assistant MQTT Broker roof Light 1.png" alt="HA MQTT 1">
+        <figcaption>Obr. 7 — MQTT správa pre roofLight_1</figcaption>
+      </figure>
+      <figure>
+        <img src="../images/Home Assistant MQTT Broker roof Light 2.png" alt="HA MQTT 2">
+        <figcaption>Obr. 8 — MQTT správa pre roofLight_2</figcaption>
+      </figure>
+    </div>
+
+    <h3>4.4 Odosielanie do AWS — <code>sendToAWS()</code></h3>
+    <ul>
+      <li>Nadväzuje šifrované TLS spojenie s AWS IoT endpoint (port <code>8883</code>)</li>
+      <li>Autentifikácia cez RSA certifikáty (uložené v <code>secrets.h</code>)</li>
+      <li>Subscribe → Publish JSON → Unsubscribe → Disconnect</li>
+      <li>Spojenie sa po každom odoslaní zatvára</li>
+    </ul>
+
+    <h3>4.5 Správa WiFi — <code>reconnectWiFi()</code></h3>
+    <ul>
+      <li>Ak WiFi vypadne, zavolá <code>disconnect()</code> → <code>reconnect()</code></li>
+      <li>Čaká v 5-sekundovej slučke až do obnovenia spojenia</li>
+    </ul>
+
+    <h3>4.6 Hlavná slučka — <code>loop()</code></h3>
+    <div class="flow-box">┌─────────────────────────────┐
+│  WiFi OK?                   │
+│  NIE → reconnectWiFi()      │
+│                             │
+│  sensorData()               │
+│  → ÁNO: sendToLocalMQTT()  │
+│          sendToAWS()        │
+│                             │
+│  client.loop()              │
+│  delay(10 000 ms)           │
+└─────────────────────────────┘
+         ↑ opakuje sa donekonečna</div>
+    <p>Meranie prebieha každých <strong>10 sekúnd</strong> (<code>LOOP_PERIOD = 10000 ms</code>).</p>
+  </section>
+
+  <!-- 5. AWS -->
+  <section id="aws">
+    <h2>5. Úložisko dát — AWS TimeStream</h2>
+    <p>Dáta prijaté cez AWS IoT sú ukladané do databázy <strong>Amazon Timestream</strong> (tabuľka <code>Sensors.roofSensor</code>).</p>
+    <p>Každý záznam obsahuje:</p>
+    <ul>
+      <li><code>SensorID</code> → <code>roof1</code></li>
+      <li><code>measure_name</code> → <code>light</code> (int) alebo <code>date</code> (varchar)</li>
+      <li><code>time</code> → AWS timestamp prijatia správy</li>
+      <li><code>measure_value</code> → nameraná hodnota</li>
+    </ul>
+    <div class="img-full">
+      <figure>
+        <img src="../images/AWS DB Timestream.png" alt="AWS Timestream">
+        <figcaption>Obr. 9 — AWS Timestream databáza s nameraných dátami</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6. GRAFANA -->
+  <section id="grafana">
+    <h2>6. Vizualizácia — Grafana</h2>
+    <p>
+      Dáta z oboch senzorov sú zobrazené v <strong>Grafana dashboarde</strong> „Roof Light Sensors".
+      Graf zobrazuje priemernú intenzitu svetla (<code>lx.mean</code>) v čase s obnovou každých 5 sekúnd.
+    </p>
+    <p>Z grafu je viditeľný typický denný priebeh — maximum okolo poludnia (~14 000–15 000 lux), pokles ráno a popoludní.</p>
+    <div class="img-full">
+      <figure>
+        <img src="../images/Light Detector Grafana.png" alt="Grafana Dashboard">
+        <figcaption>Obr. 10 — Grafana dashboard s hodnotami oboch senzorov</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 7. KONFIGURÁCIA -->
+  <section id="config">
+    <h2>7. Konfigurácia — <code>secrets.h</code></h2>
+    <div class="warning">
+      ⚠️ Súbor <code>secrets.h</code> <strong>nie je súčasťou repozitára</strong> — obsahuje citlivé prihlasovacie údaje a certifikáty. Pre vlastné nasadenie vytvor tento súbor podľa šablóny nižšie.
+    </div>
+    <table>
+      <thead><tr><th>Parameter</th><th>Popis</th></tr></thead>
+      <tbody>
+        <tr><td><code>THINGNAME</code></td><td>Názov AWS IoT zariadenia</td></tr>
+        <tr><td><code>AWS_IOT_ENDPOINT</code></td><td>AWS IoT endpoint URL</td></tr>
+        <tr><td><code>AWS_IOT_PUBLISH_TOPIC</code></td><td>MQTT téma pre odosielanie</td></tr>
+        <tr><td><code>AWS_IOT_SUBSCRIBE_TOPIC</code></td><td>MQTT téma pre príjem</td></tr>
+        <tr><td><code>WIFI_SSID</code></td><td>Meno WiFi siete</td></tr>
+        <tr><td><code>WIFI_PASSWORD</code></td><td>Heslo WiFi siete</td></tr>
+        <tr><td><code>TIMEOFFSET</code></td><td>Časová zóna v sekundách (GMT+1 = 3600)</td></tr>
+        <tr><td><code>HA_MQTT_SERVER</code></td><td>IP adresa lokálneho HA MQTT brokera</td></tr>
+        <tr><td><code>HA_MQTT_PORT</code></td><td>Port MQTT brokera (default 1883)</td></tr>
+        <tr><td><code>HA_MQTT_USER</code></td><td>MQTT používateľské meno</td></tr>
+        <tr><td><code>HA_MQTT_PASSWORD</code></td><td>MQTT heslo</td></tr>
+        <tr><td><code>HA_MQTT_TOPIC</code></td><td>MQTT téma pre Home Assistant</td></tr>
+        <tr><td><code>PUBLISH_MESSAGE_ID</code></td><td>Identifikátor správy (napr. <code>roof1</code>)</td></tr>
+        <tr><td><code>LOOP_PERIOD</code></td><td>Interval merania v ms (10000 = 10 sek.)</td></tr>
+        <tr><td><code>AWS_CERT_CA</code></td><td>Amazon Root CA certifikát</td></tr>
+        <tr><td><code>AWS_CERT_CRT</code></td><td>Device certifikát</td></tr>
+        <tr><td><code>AWS_CERT_PRIVATE</code></td><td>Device privátny kľúč RSA</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8. KNIŽNICE -->
+  <section id="libraries">
+    <h2>8. Použité knižnice</h2>
+    <table>
+      <thead><tr><th>Knižnica</th><th>Účel</th></tr></thead>
+      <tbody>
+        <tr><td><code>WiFiClientSecure</code></td><td>Šifrované WiFi spojenie (TLS) pre AWS</td></tr>
+        <tr><td><code>PubSubClient</code></td><td>MQTT klient</td></tr>
+        <tr><td><code>ArduinoJson</code></td><td>Serializácia dát do JSON</td></tr>
+        <tr><td><code>NTPClient</code> + <code>WiFiUdp</code></td><td>Synchronizácia času cez NTP</td></tr>
+        <tr><td><a href="https://github.com/DFRobot/DFRobot_B_LUX_V30B" target="_blank">DFRobot_B_LUX_V30B</a></td><td>Ovládač svetelného senzora</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 9. ZARIADENIA -->
+  <section id="devices">
+    <h2>9. Dve zariadenia v nasadení</h2>
+    <table>
+      <thead><tr><th></th><th>Jednotka 1</th><th>Jednotka 2</th></tr></thead>
+      <tbody>
+        <tr><td><strong>THINGNAME</strong></td><td><code>roofLight_1</code></td><td><code>roofLight_2</code></td></tr>
+        <tr><td><strong>Message ID</strong></td><td><code>roof1</code></td><td><code>roof2</code></td></tr>
+        <tr><td><strong>AWS téma</strong></td><td><code>house/roof/roofLight_1</code></td><td><code>house/roof/roofLight_2</code></td></tr>
+        <tr><td><strong>HA téma</strong></td><td><code>home/roof/roofLight_1</code></td><td><code>home/roof/roofLight_2</code></td></tr>
+        <tr><td><strong>Interval</strong></td><td>10 sekúnd</td><td>10 sekúnd</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      ℹ️ Kód v repozitári je pre jednotku <code>roofLight_1</code>. Pre druhú jednotku stačí zmeniť príslušné hodnoty v <code>secrets.h</code>.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>DFRobot Light Sensor — IoT projekt | MIT License | <a href="https://github.com/tomasko1987/Light-detector" target="_blank">GitHub</a></p>
+</footer>
+
+</body>
+</html>
